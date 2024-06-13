@@ -1,0 +1,88 @@
+#include <Servo.h>
+//defining Servos
+Servo ServoMotorH;
+int ServoHorizotal = 0;
+int ServoHorizotalLimitHigh = 160;
+int ServoHorizotalLimitLow = 20;
+
+Servo ServoMotorV; 
+int ServoVertical = 0; 
+int ServoVerticalLimitHigh = 160;
+int ServoVerticalLimitLow = 20;
+//Assigning LDRs
+int LDR1 = 0; //top left 
+int LDR2 = 1; //top right 
+int LDR4 = 3; // bottom left 
+int LDR3 = 2; // bottom right 
+
+ void setup () 
+ {
+  ServoMotorH.attach(10);
+  ServoMotorH.write(0);
+  ServoMotorV.attach(9);
+  ServoMotorV.write(0);
+  delay(500);
+ }
+
+void loop()
+{
+  ServoHorizotal = ServoMotorH.read();
+  ServoVertical = ServoMotorV.read();
+  //capturing analog values of each LDR
+  int NW = analogRead(LDR1);
+  int NE = analogRead(LDR2);
+  int SW = analogRead(LDR4);
+  int SE = analogRead(LDR3);
+  // calculating average
+  int NORTH = (NW + NE) / 2; //average of top LDRs
+  int SOUTH = (SW + SE) / 2; //average of bottom LDRs
+  int WEST = (NW + SW) / 2; //average of left LDRs
+  int EAST = (NE + SE) / 2; //average of right LDRs
+
+  if (NORTH < SOUTH)
+  {
+    ServoMotorV.write(ServoVertical +1);
+    if (ServoVertical > ServoVerticalLimitHigh) 
+     { 
+      ServoVertical = ServoVerticalLimitHigh;
+     }
+    delay(15);
+  }
+  else if (SOUTH < NORTH)
+  {
+    ServoMotorV.write(ServoVertical -1);
+    if (ServoVertical < ServoVerticalLimitLow)
+  {
+    ServoVertical = ServoVerticalLimitLow;
+  }
+    delay(15);
+  }
+  else 
+  {
+    ServoMotorV.write(ServoVertical);
+  }
+  
+  if (WEST > EAST)
+  {
+    ServoMotorH.write(ServoHorizotal +1);
+    if (ServoHorizotal > ServoHorizotalLimitHigh)
+    {
+    ServoHorizotal = ServoHorizotalLimitHigh;
+    }
+    delay(15);
+  }
+  else if (EAST > WEST)
+  {
+    ServoMotorH.write(ServoHorizotal -1);
+    if (ServoHorizotal < ServoHorizotalLimitLow)
+     {
+     ServoHorizotal = ServoHorizotalLimitLow;
+     }
+    delay(15);
+  }
+  else 
+  {
+    ServoMotorH.write(ServoHorizotal);
+  }
+  delay(50);
+}
